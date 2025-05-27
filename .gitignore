@@ -19,7 +19,6 @@ log.txt
 
 # Ionic
 /.ionic
-/www
 /platforms
 7/plugins
 
@@ -72,3 +71,4 @@ android-sdk.zip
 *.zip
 *.apk
 .angular/
+
