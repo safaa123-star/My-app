@@ -9,22 +9,52 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18'
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
 
-      - name: Install dependencies
-        run: npm install
+    - name: Install Cordova and Ionic CLI
+      run: npm install -g cordova ionic
 
-      - name: Add Cordova Android platform
-        run: npx cordova platform add android
+    - name: Install project dependencies
+      run: npm install
 
-      - name: Build APK
-        run: npx cordova build android
+    - name: Build Ionic project
+      run: npx ionic build
+
+    - name: Check Cordova project files
+      run: ls -la config.xml www
+
+    - name: Set up Java and Android SDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+    - name: Install Android SDK
+      run: |
+        npm install -g cordova-res
+        cordova telemetry off
+        yes | sdkmanager --licenses
+        sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
+
+    - name: Add Android platform
+      run: cordova platform add android
+
+    - name: Build APK
+      run: cordova build android --debug
+
+    - name: Check APK existence
+      run: ls -la platforms/android/app/build/outputs/apk/debug/
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-debug.apk
+        path: platforms/android/app/build/outputs/apk/debug/app-debug.apk
 
 
 
