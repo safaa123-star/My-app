@@ -1,9 +1,6 @@
-name: Build Ionic Angular App
+name: Build and Prepare Android APK
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
@@ -11,36 +8,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: ✅ Checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: ✅ Set up Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20.11.1 # متوافق مع cordova-android
+          node-version: 20
 
-      - name: ✅ Install Ionic CLI and Capacitor
-        run: |
-          npm install -g @ionic/cli
-          npm install
+      - name: Install Ionic & Capacitor CLI
+        run: npm install -g @ionic/cli @capacitor/cli
 
-      - name: ✅ Build Ionic project
-        run: npm run build || npx ionic build
+      - name: Install project dependencies
+        run: npm install
 
-      - name: ✅ Initialize Capacitor
-        run: npx cap init "MyApp" "com.example.myapp" --web-dir=www
+      - name: Build Ionic project
+        run: npm run build
 
-      - name: ✅ Add Android platform
-        run: npm install @capacitor/android && npx cap add android
+      - name: Initialize Capacitor
+        run: npx cap init "MyApp" "com.example.myapp" --web-dir=www --npm-client=npm
 
-      - name: ✅ Copy web assets to native platforms
-        run: npx cap copy
+      - name: Add Android platform
+        run: npx cap add android
 
-      - name: ✅ Upload Android folder
+      - name: Sync Capacitor
+        run: npx cap sync android
+
+      - name: Upload Android project folder
         uses: actions/upload-artifact@v4
         with:
-          name: android-project
+          name: android-folder
           path: android
+
 
 
 
