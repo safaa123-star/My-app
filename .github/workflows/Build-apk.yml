@@ -1,60 +1,39 @@
-name: Build APK
+name: Build Ionic Angular App
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '16'
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.19.0
 
-    - name: Install Cordova and Ionic CLI
-      run: npm install -g cordova ionic
+      - name: Install Cordova and Ionic CLI
+        run: npm install -g cordova ionic
 
-    - name: Install project dependencies
-      run: npm install
+      - name: Install project dependencies
+        run: npm install
 
-    - name: Build Ionic project
-      run: npx ionic build
+      - name: Build Ionic project
+        run: npx ionic build
 
-    - name: Check Cordova project files
-      run: ls -la config.xml www
+      - name: Archive Production Files (اختياري)
+        uses: actions/upload-artifact@v3
+        with:
+          name: www-folder
+          path: www
 
-    - name: Set up Java and Android SDK
-      uses: actions/setup-java@v3
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-    - name: Install Android SDK
-      run: |
-        npm install -g cordova-res
-        cordova telemetry off
-        yes | sdkmanager --licenses
-        sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
-
-    - name: Add Android platform
-      run: cordova platform add android
-
-    - name: Build APK
-      run: cordova build android --debug
-
-    - name: Check APK existence
-      run: ls -la platforms/android/app/build/outputs/apk/debug/
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-debug.apk
-        path: platforms/android/app/build/outputs/apk/debug/app-debug.apk
 
 
 
