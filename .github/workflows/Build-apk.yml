@@ -17,7 +17,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20.5.0  # لاحظ أننا نرفع الإصدار من 18 إلى 20.5 لتجنب الخطأ
+          node-version: 20.5.0
 
       - name: Install global tools
         run: npm install -g @ionic/cli
@@ -28,13 +28,16 @@ jobs:
       - name: Build Ionic project
         run: ionic build
 
-      - name: Install Android platform for Capacitor
-        run: npm install @capacitor/android
+      - name: Install Capacitor dependencies
+        run: npm install @capacitor/core @capacitor/cli @capacitor/android
 
-      - name: Add Capacitor Android platform
+      - name: Initialize Capacitor
+        run: npx cap init "MyApp" "com.example.myapp" --web-dir=www --npm-client=npm --silent
+
+      - name: Add Android platform
         run: npx cap add android
 
-      - name: Copy web assets to native platforms
+      - name: Copy web assets
         run: npx cap copy
 
       - name: Build APK
@@ -47,6 +50,7 @@ jobs:
         with:
           name: app-debug.apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+
 
 
 
