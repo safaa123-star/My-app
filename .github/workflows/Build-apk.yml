@@ -12,10 +12,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18.19.0
 
@@ -28,11 +28,12 @@ jobs:
       - name: Build Ionic project
         run: npx ionic build
 
-      - name: Archive Production Files (اختياري)
-        uses: actions/upload-artifact@v3
+      - name: Upload www folder
+        uses: actions/upload-artifact@v4
         with:
           name: www-folder
           path: www
+
 
 
 
