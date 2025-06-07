@@ -1,4 +1,4 @@
-name: Build Ionic Angular APK
+name: Build Ionic Angular App
 
 on:
   push:
@@ -11,45 +11,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: ✅ Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: ✅ Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20.5.0
+          node-version: 20.11.1 # متوافق مع cordova-android
 
-      - name: Install global tools
-        run: npm install -g @ionic/cli
+      - name: ✅ Install Ionic CLI and Capacitor
+        run: |
+          npm install -g @ionic/cli
+          npm install
 
-      - name: Install project dependencies
-        run: npm install
+      - name: ✅ Build Ionic project
+        run: npm run build || npx ionic build
 
-      - name: Build Ionic project
-        run: ionic build
+      - name: ✅ Initialize Capacitor
+        run: npx cap init "MyApp" "com.example.myapp" --web-dir=www
 
-      - name: Install Capacitor dependencies
-        run: npm install @capacitor/core @capacitor/cli @capacitor/android
+      - name: ✅ Add Android platform
+        run: npm install @capacitor/android && npx cap add android
 
-      - name: Initialize Capacitor
-        run: npx cap init "MyApp" "com.example.myapp" --web-dir=www --silent
-
-      - name: Add Android platform
-        run: npx cap add android
-
-      - name: Copy web assets
+      - name: ✅ Copy web assets to native platforms
         run: npx cap copy
 
-      - name: Build APK
-        run: |
-          cd android
-          ./gradlew assembleDebug
-
-      - name: Upload APK
+      - name: ✅ Upload Android folder
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug.apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: android-project
+          path: android
+
 
 
 
