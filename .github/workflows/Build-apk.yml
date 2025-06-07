@@ -32,7 +32,7 @@ jobs:
         run: npm install @capacitor/core @capacitor/cli @capacitor/android
 
       - name: Initialize Capacitor
-        run: npx cap init "MyApp" "com.example.myapp" --web-dir=www --npm-client=npm --silent
+        run: npx cap init "MyApp" "com.example.myapp" --web-dir=www --silent
 
       - name: Add Android platform
         run: npx cap add android
@@ -50,6 +50,7 @@ jobs:
         with:
           name: app-debug.apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+
 
 
 
