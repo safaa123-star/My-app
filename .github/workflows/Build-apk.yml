@@ -1,40 +1,43 @@
-name: Build Ionic Angular App
+name: Build Ionic Angular APK
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: 20.5.0  # لاحظ أننا نرفع الإصدار من 18 إلى 20.5 لتجنب الخطأ
 
-      - name: Install dependencies
+      - name: Install global tools
+        run: npm install -g @ionic/cli
+
+      - name: Install project dependencies
         run: npm install
 
-      - name: Install Capacitor/Android build tools
-        run: |
-          npm install -g @ionic/cli
-          npm install @capacitor/core @capacitor/cli
-          npx cap init "MyApp" "com.example.myapp" --web-dir=www
-          npx cap add android
+      - name: Build Ionic project
+        run: ionic build
 
-      - name: Build Ionic Angular app
-        run: npm run build
+      - name: Install Android platform for Capacitor
+        run: npm install @capacitor/android
 
-      - name: Copy web assets to Android
-        run: npx cap copy android
+      - name: Add Capacitor Android platform
+        run: npx cap add android
 
-      - name: Build Android APK
+      - name: Copy web assets to native platforms
+        run: npx cap copy
+
+      - name: Build APK
         run: |
           cd android
           ./gradlew assembleDebug
@@ -44,6 +47,7 @@ jobs:
         with:
           name: app-debug.apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+
 
 
 
