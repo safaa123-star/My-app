@@ -1,3 +1,4 @@
+
 name: Build Ionic Capacitor Android APK
 
 on:
@@ -38,6 +39,9 @@ jobs:
 
       - name: Copy web assets
         run: npx cap copy
+
+      - name: Sync Capacitor plugins
+        run: npx cap sync android
 
       - name: Build Android APK
         run: |
