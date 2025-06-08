@@ -1,44 +1,42 @@
-name: Build and Prepare Android APK
+name: Build Ionic Angular App
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20
-
-      - name: Install Ionic & Capacitor CLI
-        run: npm install -g @ionic/cli @capacitor/cli
-
-      - name: Install project dependencies
+          node-version: '22.15.1'
+      - name: Install dependencies
         run: npm install
-
-      - name: Build Ionic project
-        run: npm run build
-
+      - name: Install Capacitor
+        run: npm install @capacitor/core @capacitor/cli @capacitor/android
       - name: Initialize Capacitor
-        run: npx cap init "MyApp" "com.example.myapp" --web-dir=www --npm-client=npm
-
+        run: npx cap init MyIonicApp com.safaa.myapp --web-dir=www
       - name: Add Android platform
         run: npx cap add android
-
       - name: Sync Capacitor
-        run: npx cap sync android
-
-      - name: Upload Android project folder
+        run: npx cap sync
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Build APK
+        run: npx cap build android --release
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: android-folder
-          path: android
+          name: MyIonicApp-release.apk
+          path: android/app/build/outputs/apk/release/app-release-unsigned.apk
 
 
 
