@@ -1,57 +1,59 @@
-name: Build Ionic Capacitor Android APK
+name: Build Ionic Angular App
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22.15.1'  # الإصدار الأحدث
 
-      - name: Install global dependencies
-        run: npm install -g @ionic/cli @capacitor/cli
+    - name: Install Cordova and Ionic CLI
+      run: npm install -g cordova ionic
 
-      - name: Install project dependencies
-        run: npm install
+    - name: Install project dependencies
+      run: npm install
 
-      - name: Build Ionic app
-        run: ionic build
+    - name: Build Ionic project
+      run: npx ionic build
 
-      - name: Install Capacitor Android
-        run: npm install @capacitor/android
+    - name: Check Cordova project files
+      run: ls -la config.xml www
 
-      - name: Initialize Capacitor
-        run: |
-          npx cap init "MyApp" "com.example.myapp" --web-dir=www --npm-client=npm || echo "Already initialized"
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'  # إصدار أحدث
+        distribution: 'zulu'
 
-      - name: Add Android platform
-        run: |
-          npx cap add android || echo "Android platform already added"
+    - name: Install Android SDK
+      run: |
+        yes | sdkmanager --licenses
+        sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
 
-      - name: Copy web assets
-        run: npx cap copy
+    - name: Add Android platform
+      run: cordova platform add android
 
-      - name: Sync Capacitor plugins
-        run: npx cap sync android
+    - name: Build APK
+      run: cordova build android --debug
 
-      - name: Build Android APK (Release)
-        run: |
-          cd android
-          ./gradlew assembleRelease
+    - name: Check APK existence
+      run: ls -la platforms/android/app/build/outputs/apk/debug/
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-release.apk
-          path: android/app/build/outputs/apk/release/app-release.apk
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-debug.apk
+        path: platforms/android/app/build/outputs/apk/debug/app-debug.apk
 
 
 
