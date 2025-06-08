@@ -1,0 +1,51 @@
+name: Build Ionic Capacitor Android APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install global dependencies
+        run: npm install -g @ionic/cli @capacitor/cli
+
+      - name: Install project dependencies
+        run: npm install
+
+      - name: Build Ionic app
+        run: ionic build
+
+      - name: Install Capacitor Android
+        run: npm install @capacitor/android
+
+      - name: Initialize Capacitor
+        run: |
+          npx cap init "MyApp" "com.example.myapp" --web-dir=www --npm-client=npm || echo "Already initialized"
+
+      - name: Add Android platform
+        run: |
+          npx cap add android || echo "Android platform already added"
+
+      - name: Copy web assets
+        run: npx cap copy
+
+      - name: Build Android APK
+        run: |
+          cd android
+          ./gradlew assembleRelease
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release.apk
+          path: android/app/build/outputs/apk/release/app-release.apk
