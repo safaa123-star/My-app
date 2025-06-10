@@ -24,5 +24,4 @@
             <application android:networkSecurityConfig="@xml/network_security_config" />
         </edit-config>
     </platform>
-    <plugin name="cordova-plugin-whitelist" spec="1" />
 </widget>
