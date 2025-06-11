@@ -12,15 +12,16 @@ $RECYCLE.BIN/
 *.log
 log.txt
 
-
 /.sourcemaps
 /.versions
 /coverage
 
 # Ionic
 /.ionic
-/platforms
-7/plugins
+platforms/
+!platforms/android/res/xml/network_security_config.xml
+plugins/
+www/
 
 # Compiled output
 /dist
@@ -36,14 +37,13 @@ yarn-error.log
 # IDEs and editors
 .idea/
 .project
+.class
 .classpath
 .c9/
 *.launch
 .settings/
 *.sublime-project
 *.sublime-workspace
-
-# Visual Studio Code
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -51,18 +51,21 @@ yarn-error.log
 !.vscode/extensions.json
 .history/*
 
-
 # Miscellaneous
 /.angular
 /.angular/cache
 .sass-cache/
-/.nx
-/.nx/cache
+.nx/
+.nx/cache
 /connect.lock
 /coverage
 /libpeerconnection.log
 testem.log
 /typings
+# تجاهل الأيقونات في الجذر
+ic_launcher.jpg
+ic_launcher.png
+ionic.config.jsonx
 
 # System files
 .DS_Store
@@ -70,5 +73,3 @@ Thumbs.db
 android-sdk.zip
 *.zip
 *.apk
-.angular/
-
